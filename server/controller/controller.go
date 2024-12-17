@@ -1,8 +1,13 @@
 package controller
 
-import "paper-server/domain/dtos"
+import (
+	"paper-server/domain"
+	"paper-server/domain/dtos"
+)
 
-type PaperStorage struct{}
+type PaperStorage struct {
+	usecase domain.IPaperStorageUsecase
+}
 
 func (controller *PaperStorage) AddPaper(args dtos.AddPaperInput, reply *dtos.AddPaperOutput) {
 

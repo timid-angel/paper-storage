@@ -1,9 +1,9 @@
 package dtos
 
-import "paper-server/domain"
+import "paper-server/domain/entities"
 
 type AddPaperInput struct {
-	domain.Paper
+	entities.Paper
 }
 
 type AddPaperOutput struct {
@@ -14,7 +14,7 @@ type AddPaperOutput struct {
 type ListPaperInput struct{}
 
 type ListPaperOuput struct {
-	papers []domain.PaperData
+	papers []entities.PaperData
 }
 
 type GetPaperDetailsInput struct {
@@ -22,7 +22,7 @@ type GetPaperDetailsInput struct {
 }
 
 type GetPaperDetailsOutput struct {
-	domain.PaperData
+	entities.PaperData
 }
 
 type FetchPaperContentInput struct {
@@ -30,5 +30,5 @@ type FetchPaperContentInput struct {
 }
 
 type FetchPaperContentOutput struct {
-	domain.Paper
+	entities.Paper
 }
