@@ -1,8 +1,8 @@
 package storage_repository
 
 import (
-	"paper-server/domain"
 	"paper-server/domain/entities"
+	"paper-server/server/domain"
 	"sync"
 )
 

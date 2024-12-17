@@ -1,9 +1,9 @@
 package paper_usecase
 
 import (
-	"paper-server/domain"
 	"paper-server/domain/dtos"
 	"paper-server/domain/entities"
+	"paper-server/server/domain"
 )
 
 type PaperStorageUsecase struct {

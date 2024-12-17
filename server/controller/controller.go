@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"paper-server/domain"
 	"paper-server/domain/dtos"
+	"paper-server/server/domain"
 )
 
 type PaperStorage struct {
