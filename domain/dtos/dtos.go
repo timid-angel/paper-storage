@@ -1,6 +1,6 @@
 package dtos
 
-import "paper-server/server/domain"
+import "paper-server/domain"
 
 type AddPaperInput struct {
 	domain.Paper

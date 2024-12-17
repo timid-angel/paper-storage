@@ -1,6 +1,6 @@
 package controller
 
-import "paper-server/server/domain/dtos"
+import "paper-server/domain/dtos"
 
 type PaperStorage struct{}
 
