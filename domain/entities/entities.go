@@ -1,13 +1,13 @@
 package entities
 
 type PaperData struct {
-	paperNumber int
-	author      string
-	title       string
+	PaperNumber int
+	Author      string
+	Title       string
 }
 
 type Paper struct {
 	PaperData
-	format  string
-	content []byte
+	Format  string
+	Content []byte
 }

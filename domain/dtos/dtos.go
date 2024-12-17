@@ -7,18 +7,18 @@ type AddPaperInput struct {
 }
 
 type AddPaperOutput struct {
-	success bool
-	message string
+	Success bool
+	Message string
 }
 
 type ListPaperInput struct{}
 
 type ListPaperOuput struct {
-	papers []entities.PaperData
+	Papers []entities.PaperData
 }
 
 type GetPaperDetailsInput struct {
-	paperNumber int
+	PaperNumber int
 }
 
 type GetPaperDetailsOutput struct {
@@ -26,7 +26,7 @@ type GetPaperDetailsOutput struct {
 }
 
 type FetchPaperContentInput struct {
-	paperNumber int
+	PaperNumber int
 }
 
 type FetchPaperContentOutput struct {

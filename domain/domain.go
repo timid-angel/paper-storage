@@ -16,6 +16,10 @@ func (err *DomainError) Error() string {
 	return err.message
 }
 
+func NewDomainError(message string) *DomainError {
+	return &DomainError{message: message}
+}
+
 type IPaperStorageUsecase interface {
 	AddPaper(paper dtos.AddPaperInput) IDomainError
 	ListPapers() (dtos.ListPaperOuput, IDomainError)
@@ -24,8 +28,8 @@ type IPaperStorageUsecase interface {
 }
 
 type IStorageRepository interface {
-	AddPaper(paper dtos.AddPaperInput) IDomainError
-	ListPapers() (dtos.ListPaperOuput, IDomainError)
-	GetPaperDetails(paperNumber int) (dtos.GetPaperDetailsOutput, IDomainError)
-	FetchPaperContent(paperNumber int) (dtos.FetchPaperContentOutput, IDomainError)
+	AddPaper(paper *dtos.AddPaperInput) IDomainError
+	ListPapers() (*dtos.ListPaperOuput, IDomainError)
+	GetPaperDetails(paperNumber int) (*dtos.GetPaperDetailsOutput, IDomainError)
+	FetchPaperContent(paperNumber int) (*dtos.FetchPaperContentOutput, IDomainError)
 }

@@ -12,16 +12,48 @@ type StorageRepository struct {
 	paper map[int]entities.Paper
 }
 
-func (repository *StorageRepository) AddPaper(paper dtos.AddPaperInput) domain.IDomainError {
-
+func (r *StorageRepository) AddPaper(data *dtos.AddPaperInput) domain.IDomainError {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.paper[data.PaperNumber] = data.Paper
+	return nil
 }
 
-func (repository *StorageRepository) ListPapers() (dtos.ListPaperOuput, domain.IDomainError) {
+func (r *StorageRepository) ListPapers() (*dtos.ListPaperOuput, domain.IDomainError) {
+	papers := []entities.PaperData{}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for _, paper := range r.paper {
+		papers = append(papers, paper.PaperData)
+	}
 
+	return &dtos.ListPaperOuput{
+		Papers: papers,
+	}, nil
 }
 
-func (repository *StorageRepository) GetPaperDetails(paperNumber int) (dtos.GetPaperDetailsOutput, domain.IDomainError) {
+func (r *StorageRepository) GetPaperDetails(paperNumber int) (*dtos.GetPaperDetailsOutput, domain.IDomainError) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	paper, exists := r.paper[paperNumber]
+	if !exists {
+		return nil, domain.NewDomainError("Paper with given number does not exist")
+	}
+
+	return &dtos.GetPaperDetailsOutput{
+		PaperData: paper.PaperData,
+	}, nil
 }
 
-func (repository *StorageRepository) FetchPaperContent(paperNumber int) (dtos.FetchPaperContentOutput, domain.IDomainError) {
+func (r *StorageRepository) FetchPaperContent(paperNumber int) (*dtos.FetchPaperContentOutput, domain.IDomainError) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	paper, exists := r.paper[paperNumber]
+	if !exists {
+		return nil, domain.NewDomainError("Paper with given number does not exist")
+	}
+
+	return &dtos.FetchPaperContentOutput{
+		Paper: paper,
+	}, nil
 }
