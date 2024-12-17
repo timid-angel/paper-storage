@@ -1,20 +1,33 @@
-package usecase
+package paper_usecase
 
 import (
 	"paper-server/domain"
 	"paper-server/domain/dtos"
+	"paper-server/domain/entities"
 )
 
-type PaperStorageUsecase struct{}
-
-func (usecase *PaperStorageUsecase) AddPaper(paper dtos.AddPaperInput) domain.IDomainError {
+type PaperStorageUsecase struct {
+	storageRepository domain.IStorageRepository
 }
 
-func (usecase *PaperStorageUsecase) ListPapers() (dtos.ListPaperOuput, domain.IDomainError) {
+func NewPaperStorageUsecase(storageRepository domain.IStorageRepository) *PaperStorageUsecase {
+	return &PaperStorageUsecase{
+		storageRepository: storageRepository,
+	}
 }
 
-func (usecase *PaperStorageUsecase) GetPaperDetails(paperNumber int) (dtos.GetPaperDetailsOutput, domain.IDomainError) {
+func (usecase *PaperStorageUsecase) AddPaper(paper *dtos.AddPaperInput) domain.IDomainError {
+	return usecase.storageRepository.AddPaper(paper.Paper)
 }
 
-func (usecase *PaperStorageUsecase) FetchPaperContent(paperNumber int) (dtos.FetchPaperContentOutput, domain.IDomainError) {
+func (usecase *PaperStorageUsecase) ListPapers() (*[]entities.PaperData, domain.IDomainError) {
+	return usecase.storageRepository.ListPapers()
+}
+
+func (usecase *PaperStorageUsecase) GetPaperDetails(paperNumber int) (*entities.PaperData, domain.IDomainError) {
+	return usecase.storageRepository.GetPaperDetails(paperNumber)
+}
+
+func (usecase *PaperStorageUsecase) FetchPaperContent(paperNumber int) (*entities.Paper, domain.IDomainError) {
+	return usecase.storageRepository.FetchPaperContent(paperNumber)
 }

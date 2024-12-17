@@ -2,6 +2,7 @@ package domain
 
 import (
 	"paper-server/domain/dtos"
+	"paper-server/domain/entities"
 )
 
 type IDomainError interface {
@@ -21,15 +22,15 @@ func NewDomainError(message string) *DomainError {
 }
 
 type IPaperStorageUsecase interface {
-	AddPaper(paper dtos.AddPaperInput) IDomainError
-	ListPapers() (dtos.ListPaperOuput, IDomainError)
-	GetPaperDetails(paperNumber int) (dtos.GetPaperDetailsOutput, IDomainError)
-	FetchPaperContent(paperNumber int) (dtos.FetchPaperContentOutput, IDomainError)
+	AddPaper(paper *dtos.AddPaperInput) IDomainError
+	ListPapers() (*[]entities.PaperData, IDomainError)
+	GetPaperDetails(paperNumber int) (*entities.PaperData, IDomainError)
+	FetchPaperContent(paperNumber int) (*entities.Paper, IDomainError)
 }
 
 type IStorageRepository interface {
-	AddPaper(paper *dtos.AddPaperInput) IDomainError
-	ListPapers() (*dtos.ListPaperOuput, IDomainError)
-	GetPaperDetails(paperNumber int) (*dtos.GetPaperDetailsOutput, IDomainError)
-	FetchPaperContent(paperNumber int) (*dtos.FetchPaperContentOutput, IDomainError)
+	AddPaper(data *entities.Paper) IDomainError
+	ListPapers() (*[]entities.PaperData, IDomainError)
+	GetPaperDetails(paperNumber int) (*entities.PaperData, IDomainError)
+	FetchPaperContent(paperNumber int) (*entities.Paper, IDomainError)
 }

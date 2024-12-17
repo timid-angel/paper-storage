@@ -7,10 +7,14 @@ import (
 	"net/rpc"
 	"os"
 	"paper-server/server/controller"
+	storage_repository "paper-server/server/repository"
+	paper_usecase "paper-server/server/usecase"
 )
 
 func main() {
-	controller := new(controller.PaperStorage)
+	repository := storage_repository.NewStorageRepository()
+	usecase := paper_usecase.NewPaperStorageUsecase(repository)
+	controller := controller.NewPaperStorage(usecase)
 	if len(os.Args) != 2 {
 		log.Fatalln("[ERROR] The port must be passed as an argument")
 	}

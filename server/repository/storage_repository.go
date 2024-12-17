@@ -2,7 +2,6 @@ package storage_repository
 
 import (
 	"paper-server/domain"
-	"paper-server/domain/dtos"
 	"paper-server/domain/entities"
 	"sync"
 )
@@ -12,14 +11,20 @@ type StorageRepository struct {
 	paper map[int]entities.Paper
 }
 
-func (r *StorageRepository) AddPaper(data *dtos.AddPaperInput) domain.IDomainError {
+func NewStorageRepository() *StorageRepository {
+	return &StorageRepository{
+		paper: make(map[int]entities.Paper),
+	}
+}
+
+func (r *StorageRepository) AddPaper(data *entities.Paper) domain.IDomainError {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.paper[data.PaperNumber] = data.Paper
+	r.paper[data.PaperNumber] = *data
 	return nil
 }
 
-func (r *StorageRepository) ListPapers() (*dtos.ListPaperOuput, domain.IDomainError) {
+func (r *StorageRepository) ListPapers() (*[]entities.PaperData, domain.IDomainError) {
 	papers := []entities.PaperData{}
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -27,12 +32,10 @@ func (r *StorageRepository) ListPapers() (*dtos.ListPaperOuput, domain.IDomainEr
 		papers = append(papers, paper.PaperData)
 	}
 
-	return &dtos.ListPaperOuput{
-		Papers: papers,
-	}, nil
+	return &papers, nil
 }
 
-func (r *StorageRepository) GetPaperDetails(paperNumber int) (*dtos.GetPaperDetailsOutput, domain.IDomainError) {
+func (r *StorageRepository) GetPaperDetails(paperNumber int) (*entities.PaperData, domain.IDomainError) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	paper, exists := r.paper[paperNumber]
@@ -40,12 +43,10 @@ func (r *StorageRepository) GetPaperDetails(paperNumber int) (*dtos.GetPaperDeta
 		return nil, domain.NewDomainError("Paper with given number does not exist")
 	}
 
-	return &dtos.GetPaperDetailsOutput{
-		PaperData: paper.PaperData,
-	}, nil
+	return &paper.PaperData, nil
 }
 
-func (r *StorageRepository) FetchPaperContent(paperNumber int) (*dtos.FetchPaperContentOutput, domain.IDomainError) {
+func (r *StorageRepository) FetchPaperContent(paperNumber int) (*entities.Paper, domain.IDomainError) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	paper, exists := r.paper[paperNumber]
@@ -53,7 +54,5 @@ func (r *StorageRepository) FetchPaperContent(paperNumber int) (*dtos.FetchPaper
 		return nil, domain.NewDomainError("Paper with given number does not exist")
 	}
 
-	return &dtos.FetchPaperContentOutput{
-		Paper: paper,
-	}, nil
+	return &paper, nil
 }
