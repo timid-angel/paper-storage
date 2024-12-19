@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/rpc"
 	"os"
+	"paper-server/config"
 	"slices"
 	"strings"
 )
@@ -20,7 +21,7 @@ func getClient(address string) (*rpc.Client, error) {
 	return client, nil
 }
 
-func handleOperation(message string) string {
+func handleOperation(message string, has_add *bool) string {
 	if message == "" {
 		return "[ERROR] Empty operation"
 	}
@@ -59,6 +60,7 @@ func handleOperation(message string) string {
 			return "[ERROR] Invalid operation syntax"
 		}
 
+		*has_add = true
 		return handleAdd(client, addParams[3], addParams[4], addParams[5])
 	case "list":
 		if len(parts) != 3 {
@@ -87,11 +89,14 @@ func handleOperation(message string) string {
 
 func main() {
 	terminalReader := bufio.NewReader(os.Stdin)
+	config.LoadEnvironmentVariables(".env")
+	HAS_ADD := false
+	go subscribeToNotification(os.Getenv("RABBIT_MQ_ADDRESS"), "add_notification", &HAS_ADD)
 	for {
 		fmt.Printf("\033[3;36m>\033[0m \033[1;3;35m")
 		message, _ := terminalReader.ReadString('\n')
 		fmt.Print("\033[0m")
-		response := handleOperation(message)
+		response := handleOperation(message, &HAS_ADD)
 
 		if strings.HasPrefix(response, "[ERROR]") {
 			response = fmt.Sprintf("\033[0;31m%v\033[0m", response)

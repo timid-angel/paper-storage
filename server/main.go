@@ -9,14 +9,16 @@ import (
 	"paper-server/config"
 	"paper-server/server/controller"
 	storage_repository "paper-server/server/repository"
+	"paper-server/server/services/rabbitmq"
 	paper_usecase "paper-server/server/usecase"
 )
 
 func main() {
 	config.LoadEnvironmentVariables(".env")
 
-	repository := storage_repository.NewStorageRepository()
-	usecase := paper_usecase.NewPaperStorageUsecase(repository)
+	storageRepository := storage_repository.NewStorageRepository()
+	notificationService := rabbitmq.NewRabbitMqService(os.Getenv("RABBIT_MQ_ADDRESS"), "add_notification")
+	usecase := paper_usecase.NewPaperStorageUsecase(storageRepository, notificationService)
 	controller := controller.NewPaperStorage(usecase)
 
 	serverAddress := os.Getenv("HOST_ADDRESS")

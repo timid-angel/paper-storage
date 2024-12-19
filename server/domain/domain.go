@@ -35,3 +35,7 @@ type IStorageRepository interface {
 	FetchPaperContent(paperNumber int) (*entities.Paper, IDomainError)
 	GetNewPaperNumber() int
 }
+
+type INotificationService interface {
+	PublishNotification(message string) IDomainError
+}
