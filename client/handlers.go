@@ -7,6 +7,7 @@ import (
 	"paper-server/domain/dtos"
 	"paper-server/domain/entities"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -61,7 +62,7 @@ func handleAdd(client *rpc.Client, authorName string, paperTitle string, filePat
 		return "[ERROR] Unable to add paper: " + err.Error()
 	}
 
-	return "ADD called;" + authorName + ";" + paperTitle + ";" + filePath
+	return fmt.Sprintf("[SUCCESS] Add paper '%v, %v' in %v format with PNB = %v", paperTitle, authorName, fileExtension, reply.PaperNumber)
 }
 
 func handleList(client *rpc.Client) string {
@@ -72,7 +73,19 @@ func handleList(client *rpc.Client) string {
 		return "[ERROR] Unable to list papers: " + err.Error()
 	}
 
-	return fmt.Sprintf("%v", reply.Papers)
+	if len(reply.Papers) == 0 {
+		return "There are currently no papers in the server"
+	}
+
+	sort.Slice(reply.Papers, func(i, j int) bool {
+		return reply.Papers[i].PaperNumber < reply.Papers[j].PaperNumber
+	})
+	response := "List of Papers: "
+	for _, paper := range reply.Papers {
+		response += fmt.Sprintf("\n\t\t \033[1;35mPNB = %v:\033[0m \033[1;34m'%v' by %v\033[0m", paper.PaperNumber, paper.Title, paper.Author)
+	}
+
+	return response
 }
 
 func handleDetail(client *rpc.Client, paperID string) string {
@@ -89,7 +102,12 @@ func handleDetail(client *rpc.Client, paperID string) string {
 	if err != nil {
 		return "[ERROR] Unable to get the details of paper: " + err.Error()
 	}
-	return fmt.Sprintf("%v", reply)
+
+	response := "Paper details: \n"
+	response += fmt.Sprintf("\t    %-10s \033[1;34m%v\033[0m\n", "ID:", reply.PaperData.PaperNumber)
+	response += fmt.Sprintf("\t    %-10s \033[1;34m%v\033[0m\n", "Title:", reply.PaperData.Title)
+	response += fmt.Sprintf("\t    %-10s \033[1;34m%v\033[0m\n", "Author:", reply.PaperData.Author)
+	return response
 }
 
 func handleFetch(client *rpc.Client, paperID string) string {
@@ -107,11 +125,22 @@ func handleFetch(client *rpc.Client, paperID string) string {
 		return "[ERROR] Unable to fetch paper: " + err.Error()
 	}
 
-	fileName := fmt.Sprintf("%s - %s.%s", reply.Title, reply.Author, reply.Format)
-	err = os.WriteFile(fileName, reply.Content, 0644)
-	if err != nil {
-		return "[ERROR] Unable to write file: " + err.Error()
+	response := "Paper details: \n"
+	response += fmt.Sprintf("\t    %-10s \033[1;34m%v\033[0m\n", "ID:", reply.PaperData.PaperNumber)
+	response += fmt.Sprintf("\t    %-10s \033[1;34m%v\033[0m\n", "Title:", reply.PaperData.Title)
+	response += fmt.Sprintf("\t    %-10s \033[1;34m%v\033[0m\n", "Author:", reply.PaperData.Author)
+	if reply.Format == "txt" {
+		delimiter := fmt.Sprintf("\n%v\n", strings.Repeat("-", 100))
+		response += fmt.Sprintf("\n\033[0;32mPaper content:\033[0m%v%v%v", delimiter, string(reply.Content), delimiter)
+	} else {
+		fileName := fmt.Sprintf("%s by %s.%s", reply.Title, reply.Author, reply.Format)
+		err = os.WriteFile(fileName, reply.Content, 0644)
+		if err != nil {
+			return "[ERROR] Unable to write file: " + err.Error()
+		}
+
+		response += fmt.Sprintf("\n\t\033[0;32mPaper fetched and saved as '%v'\033[0m", fileName)
 	}
 
-	return fmt.Sprintf("Paper fetched and saved as %s", fileName)
+	return response
 }

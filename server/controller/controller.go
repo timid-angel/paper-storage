@@ -17,11 +17,12 @@ func NewPaperStorage(usecase domain.IPaperStorageUsecase) *PaperStorage {
 }
 
 func (controller *PaperStorage) AddPaper(args dtos.AddPaperInput, reply *dtos.AddPaperOutput) error {
-	err := controller.usecase.AddPaper(&args)
+	paperNumber, err := controller.usecase.AddPaper(&args)
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
 
+	reply.PaperNumber = paperNumber
 	return nil
 }
 

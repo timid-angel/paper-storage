@@ -22,7 +22,7 @@ func NewDomainError(message string) *DomainError {
 }
 
 type IPaperStorageUsecase interface {
-	AddPaper(paper *dtos.AddPaperInput) IDomainError
+	AddPaper(paper *dtos.AddPaperInput) (int, IDomainError)
 	ListPapers() (*[]entities.PaperData, IDomainError)
 	GetPaperDetails(paperNumber int) (*entities.PaperData, IDomainError)
 	FetchPaperContent(paperNumber int) (*entities.Paper, IDomainError)

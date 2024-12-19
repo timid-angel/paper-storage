@@ -7,6 +7,7 @@ type AddPaperInput struct {
 }
 
 type AddPaperOutput struct {
+	PaperNumber int
 }
 
 type ListPaperInput struct{}

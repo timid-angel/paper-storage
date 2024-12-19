@@ -16,9 +16,9 @@ func NewPaperStorageUsecase(storageRepository domain.IStorageRepository) *PaperS
 	}
 }
 
-func (usecase *PaperStorageUsecase) AddPaper(data *dtos.AddPaperInput) domain.IDomainError {
+func (usecase *PaperStorageUsecase) AddPaper(data *dtos.AddPaperInput) (int, domain.IDomainError) {
 	data.Paper.PaperNumber = usecase.storageRepository.GetNewPaperNumber()
-	return usecase.storageRepository.AddPaper(data.Paper)
+	return data.Paper.PaperNumber, usecase.storageRepository.AddPaper(data.Paper)
 }
 
 func (usecase *PaperStorageUsecase) ListPapers() (*[]entities.PaperData, domain.IDomainError) {

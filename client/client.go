@@ -92,6 +92,15 @@ func main() {
 		message, _ := terminalReader.ReadString('\n')
 		fmt.Print("\033[0m")
 		response := handleOperation(message)
-		fmt.Printf("\033[92m\n\tMessage from server:\033[0m %v\n\n", response)
+
+		if strings.HasPrefix(response, "[ERROR]") {
+			response = fmt.Sprintf("\033[0;31m%v\033[0m", response)
+		}
+
+		if strings.HasPrefix(response, "[SUCCESS]") {
+			response = fmt.Sprintf("\033[0;32m%v\033[0m", response)
+		}
+
+		fmt.Printf("\n\t> %v\n\n", response)
 	}
 }
