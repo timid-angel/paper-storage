@@ -2,24 +2,17 @@ package dtos
 
 import "paper-server/domain/entities"
 
-type Response struct {
-	Success bool
-	Message string
-}
-
 type AddPaperInput struct {
 	*entities.Paper
 }
 
 type AddPaperOutput struct {
-	Response
 }
 
 type ListPaperInput struct{}
 
 type ListPaperOuput struct {
-	Papers *[]entities.PaperData
-	Response
+	Papers []entities.PaperData
 }
 
 type GetPaperDetailsInput struct {
@@ -28,7 +21,6 @@ type GetPaperDetailsInput struct {
 
 type GetPaperDetailsOutput struct {
 	*entities.PaperData
-	Response
 }
 
 type FetchPaperContentInput struct {
@@ -37,5 +29,4 @@ type FetchPaperContentInput struct {
 
 type FetchPaperContentOutput struct {
 	*entities.Paper
-	Response
 }

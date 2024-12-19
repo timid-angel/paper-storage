@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"paper-server/domain/dtos"
 	"paper-server/server/domain"
 )
@@ -15,89 +16,47 @@ func NewPaperStorage(usecase domain.IPaperStorageUsecase) *PaperStorage {
 	}
 }
 
-func (controller *PaperStorage) AddPaper(args dtos.AddPaperInput, reply *dtos.AddPaperOutput) {
+func (controller *PaperStorage) AddPaper(args dtos.AddPaperInput, reply *dtos.AddPaperOutput) error {
 	err := controller.usecase.AddPaper(&args)
 	if err != nil {
-		*reply = dtos.AddPaperOutput{
-			Response: dtos.Response{
-				Success: false,
-				Message: err.Error(),
-			},
-		}
-
-		return
+		return fmt.Errorf("%v", err)
 	}
 
-	*reply = dtos.AddPaperOutput{
-		Response: dtos.Response{
-			Success: true,
-			Message: "Paper added successfully",
-		},
-	}
+	return nil
 }
 
-func (controller *PaperStorage) ListPapers(args dtos.ListPaperInput, reply *dtos.ListPaperOuput) {
+func (controller *PaperStorage) ListPapers(args dtos.ListPaperInput, reply *dtos.ListPaperOuput) error {
 	paperList, err := controller.usecase.ListPapers()
 	if err != nil {
-		*reply = dtos.ListPaperOuput{
-			Response: dtos.Response{
-				Success: false,
-				Message: err.Error(),
-			},
-		}
-
-		return
+		return fmt.Errorf("%v", err)
 	}
 
-	*reply = dtos.ListPaperOuput{
-		Response: dtos.Response{
-			Success: true,
-			Message: "Paper list fetched successfully",
-		},
-		Papers: paperList,
-	}
+	reply.Papers = *paperList
+	return nil
 }
 
-func (controller *PaperStorage) GetPaperDetails(args dtos.GetPaperDetailsInput, reply *dtos.GetPaperDetailsOutput) {
+func (controller *PaperStorage) GetPaperDetails(args dtos.GetPaperDetailsInput, reply *dtos.GetPaperDetailsOutput) error {
 	paperDetails, err := controller.usecase.GetPaperDetails(args.PaperNumber)
 	if err != nil {
-		*reply = dtos.GetPaperDetailsOutput{
-			Response: dtos.Response{
-				Success: false,
-				Message: err.Error(),
-			},
-		}
-
-		return
+		return fmt.Errorf("%v", err)
 	}
 
 	*reply = dtos.GetPaperDetailsOutput{
-		Response: dtos.Response{
-			Success: true,
-			Message: "Paper details fetched successfully",
-		},
 		PaperData: paperDetails,
 	}
+
+	return nil
 }
 
-func (controller *PaperStorage) FetchPaperContent(args dtos.FetchPaperContentInput, reply *dtos.FetchPaperContentOutput) {
+func (controller *PaperStorage) FetchPaperContent(args dtos.FetchPaperContentInput, reply *dtos.FetchPaperContentOutput) error {
 	paper, err := controller.usecase.FetchPaperContent(args.PaperNumber)
 	if err != nil {
-		*reply = dtos.FetchPaperContentOutput{
-			Response: dtos.Response{
-				Success: false,
-				Message: err.Error(),
-			},
-		}
-
-		return
+		return fmt.Errorf("%v", err)
 	}
 
 	*reply = dtos.FetchPaperContentOutput{
-		Response: dtos.Response{
-			Success: true,
-			Message: "Paper data fetched successfully",
-		},
 		Paper: paper,
 	}
+
+	return nil
 }

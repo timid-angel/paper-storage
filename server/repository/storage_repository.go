@@ -7,13 +7,15 @@ import (
 )
 
 type StorageRepository struct {
-	mu    sync.Mutex
-	paper map[int]entities.Paper
+	mu              sync.Mutex
+	paper           map[int]entities.Paper
+	lastPaperNumber int
 }
 
 func NewStorageRepository() *StorageRepository {
 	return &StorageRepository{
-		paper: make(map[int]entities.Paper),
+		paper:           make(map[int]entities.Paper),
+		lastPaperNumber: 0,
 	}
 }
 
@@ -55,4 +57,11 @@ func (r *StorageRepository) FetchPaperContent(paperNumber int) (*entities.Paper,
 	}
 
 	return &paper, nil
+}
+
+func (r *StorageRepository) GetNewPaperNumber() int {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.lastPaperNumber++
+	return r.lastPaperNumber
 }

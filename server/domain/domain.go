@@ -33,4 +33,5 @@ type IStorageRepository interface {
 	ListPapers() (*[]entities.PaperData, IDomainError)
 	GetPaperDetails(paperNumber int) (*entities.PaperData, IDomainError)
 	FetchPaperContent(paperNumber int) (*entities.Paper, IDomainError)
+	GetNewPaperNumber() int
 }

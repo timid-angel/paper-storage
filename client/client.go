@@ -6,7 +6,6 @@ import (
 	"net/rpc"
 	"os"
 	"slices"
-	"strconv"
 	"strings"
 )
 
@@ -15,62 +14,10 @@ var PORT = 8080
 func getClient(address string) (*rpc.Client, error) {
 	client, err := rpc.Dial("tcp", address)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to server: " + err.Error())
+		return nil, fmt.Errorf("failed to connect to server: %v", err.Error())
 	}
 
 	return client, nil
-}
-
-func getAddParams(message string) []string {
-	message += " "
-	parts := []string{}
-	cn := 0
-	curr := ""
-	for i, _ := range message {
-		c := string(message[i])
-		if c == "'" {
-			cn = (cn + 1) % 2
-			continue
-		}
-
-		if c == " " && cn == 0 {
-			if len(curr) > 0 {
-				parts = append(parts, strings.TrimSpace(curr))
-			}
-
-			curr = ""
-		}
-
-		curr += c
-	}
-
-	return parts
-}
-
-func handleAdd(client *rpc.Client, authorName string, paperTitle string, filePath string) string {
-	return "ADD called;" + authorName + ";" + paperTitle + ";" + filePath
-}
-
-func handleList(client *rpc.Client) string {
-	return "LIST called"
-}
-
-func handleDetail(client *rpc.Client, paperID string) string {
-	paperNumber, err := strconv.ParseInt(paperID, 10, 32)
-	if err != nil {
-		return "[ERROR] Invalid paper number"
-	}
-
-	return "DETAIL called" + string(paperNumber)
-}
-
-func handleFetch(client *rpc.Client, paperID string) string {
-	paperNumber, err := strconv.ParseInt(paperID, 10, 32)
-	if err != nil {
-		return "[ERROR] Invalid paper number"
-	}
-
-	return "FETCH called" + string(paperNumber)
 }
 
 func handleOperation(message string) string {
